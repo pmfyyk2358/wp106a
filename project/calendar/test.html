@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>test</title>
+    <link rel="stylesheet" type="text/css" href="spiffyCal/spiffyCal.css">
+    <script type="text/javascript" src="spiffyCal/spiffyCal.js"></script>
+    <script type="text/javascript">
+      var dateAvailable = new ctlSpiffyCalendarBox("dateAvailable", "new_product", "products_date_available","btnDate1","");
+    </script>  
+  </head>
+<body>
+    <h1 class="timme">Mon Oct 01 2017 00:00:00 GMT+0800 (台北標準時間)</h1>
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script>window.$ = window.jQuery = require('./jquery-3.2.1.min.js');</script>
+<div id="spiffycalendar" class="text"></div>
+
+<form name="new_product">
+<table width="100%"  border="0" cellspacing="0" cellpadding="4">  
+    <tr class="dataTableRow">
+        <td align="right">日期：<br /></td>
+        <td align="left">&nbsp;<script type="text/javascript">dateAvailable.writeControl(); dateAvailable.dateFormat="yyyy-MM-dd";</script> </td>
+    </tr>
+</table>
+</form>
+<script>
+    var timee=document.getElementsByClassName("timme");
+    var uv=setTimeout("nowtimeupdate()",100);
+    var z=document.getElementsByClassName("timme").length;
+    function nowtimeupdate() {
+        var secondtime=new Date();
+        timee[z-1].innerHTML=secondtime;
+        var ux=setTimeout("nowtimeupdate()",100);
+    }
+</script>
+</body>
+</html>

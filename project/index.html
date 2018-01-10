@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .shit {
+            border: 1px solid green;
+            width: 48%;
+            height: 600px;
+            color: lawngreen;
+            float: left;
+        }
+
+        .ppp {
+            border: 10px solid green;
+            width: 47%;
+            height: 30px;
+            font-size: 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: black;
+            color:lawngreen;
+            float:left;
+        }
+        body {
+            background-color: black;
+            margin: 0;
+        }
+        .youtube {
+            width: 50%;
+            height: 50%;
+            float:left;
+        }
+        a{color:inherit;text-decoration:none}
+</style>
+    <script>
+        
+
+        //地圖and移動
+        var map = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
+        var map_dim = [map[0].length, map.length]  //map_dim=[3,3]
+        //document.write("[" + map_dim[0] + "," + map_dim[1] + "]<br><br>")
+
+        //中間座標
+        x = (map_dim[0] - 1) / 2;
+        y = (map_dim[1] - 1) / 2;
+        //document.write("x =" + x + "<br>")
+        //document.write("y =" + y + "<br><br>")
+
+        //位置
+        var line = [[], []];
+        line = [["a", "b", "c"], ["a", "b", "c"], ["a", "b", "c"]]
+        for (i = 0; i < map_dim[0]; i++) {
+            for (j = 0; j < map_dim[1]; j++) {
+                line[i][j] = "不能走"
+            }
+        }
+        line[1][1] = "起始房間";
+        line[0][1] = "上方房間";
+        line[1][0] = "左邊房間";
+        line[1][2] = "右邊房間";
+        line[2][1] = "下方房間";
+        //document.write(line[1][1] + "<br>")
+        //document.write(line[x + 1][y] + "<br>")
+        //輸入
+        var res = "";
+
+        function submit() {
+            var neirom = document.getElementById("bbb");
+            if (event.keyCode == 13) {
+                res = user.value;
+                user.value = "";                       
+                neirom.innerHTML += res;
+                neirom.innerHTML += "<br>";
+                movement();
+            }
+            neirom.scrollTop = neirom.scrollHeight; 
+        }
+        //wasd移動
+        var combo = 0;
+        var tk = 0;
+        var kill = 0;
+        var sax = 0;
+        var end = 0;
+        var girl = 0;
+        var ag = 0;
+        var poison = 0;
+        function movement() {
+            var neirom = document.getElementById("bbb");
+            /*觀察*/
+            if (x == 1 && y == 1 && res == "look") {
+                neirom.innerHTML += "無論牆壁、地板、天花板都是用水泥做成，四面牆壁各有一扇門的四方形房間裡,房間裡唯一的照明是天花板上垂下的燈泡，房間中央放著一份古老的木桌椅,在桌子上放著一碗用木碗裝著的紅色無氣味的湯,然後椅子上放著兩張破舊的紙條";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 0 && y == 1 && res == "look") {
+                neirom.innerHTML += "北邊房間的門是全白色，沒有門把的廚房式推拉門,這個房間給人非常乾淨的印象，放置著櫥櫃、瓦斯爐、跟流理台等設備,房間被數個日光燈管給照亮，有如白天一般明亮在瓦斯爐上放著一個蓋上蓋子的大鐵鍋，鍋子裡是被切散的屍體,在鍋子底部有積著一些人血，這些是備用的湯";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 0 && res == "look") {
+                neirom.innerHTML += "裡面沒有任何光源，連中間房間的燈光也照射不到，打開房門的時候，就可以聽到噠噠腳步聲從房裡慢慢靠近過來";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 2 && res == "look") {
+                neirom.innerHTML += "這個房間的中央有著小小的老舊四腳桌，桌上有著盛在燭台上的蠟燭以微弱的光照亮著房間,房間四側都被大量的書櫃給塞滿,書櫃整齊的放著各式各樣的書，但是每個書的類別卻亂七八糟都不相同";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 2 && y == 1 && res == "look") {
+                neirom.innerHTML += "南邊房間的門是有著小窗戶的巨大厚重鐵門,可以聽到門的對面傳來某種激烈的呼吸聲音，以及逤逤拖行著某種重物的聲音,這是禮堂守衛，恐懼獵人在房間裡徘徊的聲音,如果從小窗戶向內觀看的話，可以模糊地看見蒼白的房間中有一隻單翼的巨大蟒蛇般的怪物";
+                neirom.innerHTML += "<br>";
+            }
+            /*查看*/
+            else if (x == 1 && y == 1 && res == "survey") {
+                
+                neirom.innerHTML += "~想回去的話 便在一小時之內 喝下有毒的湯,在喝完之前 你都無法離開,一小時內 沒有喝完的話 祂便會來迎接你~ 中央的房間寫的是「湯的房間」，北邊的房間寫的是「廚房」，南邊的房間寫的是「禮堂」，西邊的房間寫的是「書庫」，東邊的房間寫的是「奴隸的房間」";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 0 && res == "survey") {
+               
+                neirom.innerHTML += "發現她是一名約十來歲160/50/F的瘦弱少女少女跟探索者一樣穿著白袍，但上面沾滿了血漬，少女的手上還握著一把手槍雖然是眼神空洞的白化症少女，但對探索者們非常忠實會表達一定程度的感情，無論被命令甚麼都會完全遵守,但是難以跟她對話，她只會用點頭搖頭來簡單的溝通";
+                neirom.innerHTML += "<br>";
+                tk = 1;
+            }
+            else if (x == 1 && y == 2 && res == "survey") {
+               
+                neirom.innerHTML += "滿滿的書櫃";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 0 && y == 1 && res == "survey") {
+               
+                neirom.innerHTML += "發現所有的餐具都是銀製的,具有驅魔的法力";
+                neirom.innerHTML += "<br>";
+                kill = 1;
+            }
+            else if (x == 0 && y == 1 && res == "survey") {
+                
+                neirom.innerHTML += "房間深處矗立著一尊人身象神的雕像恐懼獵人只要吃下一個活人，就會從房間消失,在那之前會襲擊，殺死任何進到房間的人";
+                neirom.innerHTML += "<br>";
+            }
+            /*線索*/
+            else if (x == 1 && y == 1 && res == "clue") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "~熱騰騰的 人血湯 請在涼掉之前 盡早享用~但就這樣子喝下湯，也不會致死,是因為這個湯還沒有放毒進去的關係,若是在沒放毒的情況下喝光湯的話，在誰補充新的湯之前將沒有任何方法應對";
+                    neirom.innerHTML += "<br>";
+                }    
+            }
+            else if (x == 1 && y == 0 && res == "clue") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "發現裡面有著一張紙條,但是與紙條同時，會發現一具沒有頭顱的男子遺體 紙條內容如下 ~她是沒有名字  你忠實的僕人只要你吩咐 就算不願意也  絕對  會服從雖然不愛說話  但是個黏人的好孩子所以請好好愛惜  照顧她~ 跟紙條內容相同，她不會說話但對探索者們相當忠實,只要沒有命令她離開，還會像小貓一樣一直親近探索者但如果要她喝人血湯，或者可能會死的行動的話，便可以明顯感到她非常害怕就算如此，她也不一定不會服從(可在此房間使用date指令確認少女狀態)";
+                    neirom.innerHTML += "<br>";
+                }
+            }
+            else if (x == 1 && y == 0 && res == "date") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "問到沒有頭的屍體是不是她做的時候，她會困惑的歪頭,因為這個沒有頭的屍體並不是少女做的,這個少女是不存在於現實中的夏烏戈納爾・法格恩造出的，為了迷惑探索者們的存在";
+                    neirom.innerHTML += "<br>";
+                }
+            }
+            else if (x == 1 && y == 2 && res == "clue") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "找到一本名為<關於湯之夢>的漆黑書籍。書本是潮濕而帶有黏性，當碰到書本會發現上面沾附著帶有甜甜香氣的黑色液體猛毒(可在此房間使用date指令確認書本狀態)";
+                    neirom.innerHTML += "<br>";
+                }
+            }
+            else if (x == 1 && y == 2 && res == "date") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "發現這個液體可能是某種猛毒。這是以黑蓮所做成的毒藥，具有相當高的致死性 <關於湯之夢>書中內容如下 //正中間的房間--不好好把湯喝完就無法離開，在紙條背後寫著湯的真面目(使用clue) //北邊房間-- - 放著很多調味料與餐具，有放點預備的湯在鍋子中。 //東邊房間-- - 乖孩子在等著你，她手上有好東西喔。 //西邊房間-- - 書很重要所以不能拿出去。//南邊房間-- - 神明在此沉眠，有著關於毒的資料，守衛不吃活的東西不會消失。最重要的事情-- - 請抱著死的覺悟喝下去";
+                    neirom.innerHTML += "<br>";
+                    sax = 1;
+                }
+            }
+            else if (x == 0 && y == 1 && res == "clue") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "可以看見廚房流理台的角落放著一張紙條 ~重要的調味料  現在缺貨~";
+                    neirom.innerHTML += "<br>";
+                }
+            }
+            else if (x == 2 && y == 1 && res == "clue") {
+                combo = Math.round(Math.random() * 4);
+                if (combo == 1) {
+                    neirom.innerHTML += "發現附近有著一張紙條。 紙條的內容如下。~在正中間 孱弱之太陽中抑或是 一抹漆黑的 夢之知識上調味料 便隱藏在那裡~";
+                    neirom.innerHTML += "<br>";
+                }
+            }
+            /*ENDING*/
+            else if (x == 2 && y == 1 && res == "attack") {
+                if (sax == 1 && tk==1 && kill==1) {
+                    neirom.innerHTML += "選擇殺死守衛的辦法 1.讓少女去給他吃掉(少女) 2.用毒嘗試殺掉(用毒) 3.嘗試使用銀器驅魔(驅魔)";
+                    neirom.innerHTML += "<br>";
+                    end = 1;
+                }         
+            }
+            else if (x == 2 && y == 1 && res == "少女") {
+                if (end == 1) {
+                    neirom.innerHTML += "奴隸少女先走在前面,在房間內她發出的第一個聲音，就會是淒厲的慘叫聲吧,探索者們以這噩夢為首，可能會被拉進更深一層的神話恐怖之中。在夢裡相見的探索者們在現實中也可能相見，在夢中見到的神話生物在現實中也可能見到(BAD END)";
+                    neirom.innerHTML += "<br>";
+                    girl = 1;
+                }
+            }
+            else if (x == 2 && y == 1 && res == "用毒") {
+                combo = Math.round(Math.random() * 4);
+                if (end == 1 && combo == 1) {
+                    neirom.innerHTML += "用很低的機率 非常幸運地殺死守衛,並看見沉睡狀態的神";
+                    neirom.innerHTML += "<br>";
+                    poison = 1;    
+                }
+            }
+            else if (x == 2 && y == 1 && res == "驅魔") {
+                combo = Math.round(Math.random() * 4);
+                if (end == 1 && combo == 1) {
+                    neirom.innerHTML += "用很低的機率 非常幸運地殺死守衛,並看見沉睡狀態的神";
+                    neirom.innerHTML += "<br>";
+                    ag = 1;
+                }
+            }
+            else if (x == 2 && y == 1 && res == "喝下毒湯") {
+                combo = Math.round(Math.random() * 4);
+                if (ag == 1 || poison == 1) {
+                    if (combo == 1) {
+                        neirom.innerHTML += "幸運地沒有死去,探索者們的視野會染上全白色。然後聽到如雷貫耳的吼聲說道：「勇敢之人！吾許你返回現世！」下一次張開眼睛時，探索者們在昨天晚上睡著的地方醒來，迎接黎明。到處都找不到那個奇妙的房間，探索者們在夢中受的傷也全都消失不見。不只如此，在夢中死亡的探索者也平安甦醒了";
+                        neirom.innerHTML += "<br>";
+                    }
+                    else if (combo == 0) {
+                        neirom.innerHTML += "對抗毒湯失敗的人會看見幻覺，呼吸與心跳急遽激昂，在一分鐘內心臟衰竭，當場死亡,禮堂裡的夏烏戈納爾・法格恩將會甦醒，然後來到探索者們身邊,因為心臟病發而當場死亡的探索者在現實中也會依心臟病發死亡,但是外表上完全看不出傷口，所以無法利用緊急治療或醫學來治療";
+                        neirom.innerHTML += "<br>";
+                    }
+                }
+            }
+            /*移動*/
+            else if (x == 0 && y == 1 && res == "a") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 0 && y == 1 && res == "d") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 0 && res == "w") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 0 && res == "s") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 2 && res == "w") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 2 && res == "s") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 2 && y == 1 && res == "a") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 2 && y == 1 && res == "d") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 0 && y == 1 && res == "w") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 2 && res == "d") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 1 && y == 0 && res == "a") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (x == 2 && y == 1 && res == "s") {
+                x = x;
+                neirom.innerHTML += "不能走";
+                neirom.innerHTML += "<br>";
+            }
+            else if (res == "w" && x > 0) {
+                x = x - 1;
+                neirom.innerHTML += line[x][y];
+                neirom.innerHTML += "<br>";
+            }
+            else if (res == "a" && y > 0) {
+                y = y - 1;
+                neirom.innerHTML += line[x][y];
+                neirom.innerHTML +=
+                    "<br>";
+            }
+            else if (res == "s" && x < 2) {
+                x = x + 1;
+                neirom.innerHTML += line[x][y];
+                neirom.innerHTML += "<br>";
+            }
+            else if (res == "d" && y < 2) {
+                y = y + 1;
+                neirom.innerHTML += line[x][y];
+                neirom.innerHTML += "<br>";
+            }
+            
+        }
+    </script>
+    
+    
+    <noscript>
+    本網頁需要使用Javascript,
+    請開啟瀏覽器的Javascript功能,
+    或換用其他瀏覽器
+    </noscript>
+</head>
+<body>
+    <div class="shit"> 
+        <p id="bbb" style="color:lawngreen; width:100%;
+            height:600px;overflow:auto;margin:0">
+            你經過一陣昏迷醒來時發現被困在一個正方形的房間<br><br>
+            在房間的正中央，一張桌子上靜靜放著一碗深紅色的湯<br><br>
+            然後旁邊椅子上放著這個房間的地圖與「喝毒湯」的警告文<br><br>
+            不知不覺之中因為夏烏戈納爾・法格恩（Chaugnar Faugn）的一時興起被困在這個世界的探索者們<br><br>
+            究竟他們是否能平安逃出呢?<br><br>
+            可使用的指令教學<br><br>
+            輸入w,a,s,d並按ENTER鍵 可移動到別的房間<br><br>
+            每到新的房間 建議輸入look來看看房間有甚麼<br><br>
+            也可使用survey來調查look到的東西
+            輸入clue有"機率"得到線索<br><br>
+            遊戲一開始建議就先look房間<br><br>
+            ------------------------------------------------------------------------------------------------------------------------------------------------以下開始<br><br>
+        </p>
+    </div>
+
+
+<input type="text" id="user" onkeyup="submit();" class="ppp">    
+<div style='text-align: right;position: fixed;z-index:9999999;bottom: 0; width: 100%;cursor: pointer;line-height: 0;'><a title="Hosted on free web hosting 000webhost.com. Host your own website for FREE." target="_blank" href="https://www.000webhost.com/?utm_source=000webhostapp&amp;utm_campaign=000_logo&amp;utm_medium=website_{$app['name']}&amp;utm_content=footer_img"><img src="https://cdn.rawgit.com/000webhost/logo/e9bd13f7/footer-powered-by-000webhost-white2.png"  alt="www.000webhost.com"></a></div></body>
+</html>
